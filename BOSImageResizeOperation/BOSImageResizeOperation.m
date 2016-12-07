@@ -119,6 +119,7 @@ static inline CGFloat degrees2radians(CGFloat degrees) {
     
     CGImageRef imageRef = [self.imageToResize CGImage];
     CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+    bitmapInfo = [self normalizeBitmapInfo:bitmapInfo];
     CGColorSpaceRef colorSpaceInfo = CGImageGetColorSpace(imageRef);
     
     // This is true, but commented because right now I'm not sure what we can do about it
@@ -181,6 +182,26 @@ static inline CGFloat degrees2radians(CGFloat degrees) {
     CGImageRelease(ref);
 }
 
+- (CGBitmapInfo)normalizeBitmapInfo:(CGBitmapInfo)oldBitmapInfo {
+    //extract the alpha info by resetting everything else
+    CGImageAlphaInfo alphaInfo = oldBitmapInfo & kCGBitmapAlphaInfoMask;
+    
+    //Since iOS8 it's not allowed anymore to create contexts with unmultiplied Alpha info
+    if (alphaInfo == kCGImageAlphaLast) {
+        alphaInfo = kCGImageAlphaPremultipliedLast;
+    }
+    if (alphaInfo == kCGImageAlphaFirst) {
+        alphaInfo = kCGImageAlphaPremultipliedFirst;
+    }
+    
+    //reset the bits
+    CGBitmapInfo newBitmapInfo = oldBitmapInfo & ~kCGBitmapAlphaInfoMask;
+    
+    //set the bits to the new alphaInfo
+    newBitmapInfo |= alphaInfo;
+    
+    return newBitmapInfo;
+}
 
 
 - (void)main {
