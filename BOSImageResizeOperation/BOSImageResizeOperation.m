@@ -129,12 +129,12 @@ static inline CGFloat degrees2radians(CGFloat degrees) {
     }
      */
     
-    NSUInteger bytesPerRow = outputCanvasSize.width * 4;
+    //NSUInteger bytesPerRow = outputCanvasSize.width * 4;
     CGContextRef bitmap = CGBitmapContextCreate(NULL,
                                                 outputCanvasSize.width,
                                                 outputCanvasSize.height,
                                                 CGImageGetBitsPerComponent(imageRef),
-                                                bytesPerRow,
+                                                0,
                                                 colorSpaceInfo,
                                                 bitmapInfo);
     
